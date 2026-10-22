@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^Bash$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CODEX_HOME/hooks/guard-dangerous-commands.py\"",
+            "commandWindows": "py -3 \"%CODEX_HOME%\\hooks\\guard-dangerous-commands.py\""
+          }
+        ]
+      }
+    ]
+  }
+}
