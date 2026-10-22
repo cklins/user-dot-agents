@@ -1,0 +1,101 @@
+{
+  "version": 3,
+  "lines": [
+    [
+      {
+        "id": "1",
+        "type": "model",
+        "color": "cyan"
+      },
+      {
+        "id": "2",
+        "type": "separator"
+      },
+      {
+        "id": "dc952db3-da57-4bfd-8d88-c04615763d6e",
+        "type": "context-bar"
+      },
+      {
+        "id": "4",
+        "type": "separator"
+      },
+      {
+        "id": "5",
+        "type": "git-branch",
+        "color": "magenta"
+      },
+      {
+        "id": "6",
+        "type": "separator"
+      },
+      {
+        "id": "7",
+        "type": "git-changes",
+        "color": "yellow"
+      }
+    ],
+    [
+      {
+        "id": "db2a1745-a501-4807-ba7f-de144e2adf07",
+        "type": "session-usage",
+        "color": ""
+      },
+      {
+        "id": "10a22751-f76b-42e7-bcc5-0e97c15a699c",
+        "type": "separator"
+      },
+      {
+        "id": "3492f2d6-86d7-4430-991a-95d406a0a0e4",
+        "type": "reset-timer",
+        "color": "yellow"
+      },
+      {
+        "id": "20c10daf-efed-4e90-9ed6-057fa094c97d",
+        "type": "separator"
+      },
+      {
+        "id": "d1921891-41e1-4452-b350-143beea9911c",
+        "type": "free-memory"
+      }
+    ],
+    [
+      {
+        "id": "ddba41d7-0e96-4694-9bfc-c32f455e70ba",
+        "type": "weekly-usage"
+      },
+      {
+        "id": "c399b04a-8332-4833-86d5-f031b3b131c4",
+        "type": "separator"
+      },
+      {
+        "id": "92cef32a-f3a0-4b9f-bd45-a8b7c477914f",
+        "type": "weekly-reset-timer",
+        "color": "brightMagenta"
+      }
+    ]
+  ],
+  "flexMode": "full",
+  "compactThreshold": 60,
+  "colorLevel": 3,
+  "inheritSeparatorColors": false,
+  "globalBold": false,
+  "gitCacheTtlSeconds": 5,
+  "minimalistMode": false,
+  "powerline": {
+    "enabled": false,
+    "separators": [
+      ""
+    ],
+    "separatorInvertBackground": [
+      false
+    ],
+    "startCaps": [],
+    "endCaps": [],
+    "autoAlign": false,
+    "continueThemeAcrossLines": false
+  },
+  "installation": {
+    "method": "pinned",
+    "installedVersion": "2.2.23"
+  }
+}
