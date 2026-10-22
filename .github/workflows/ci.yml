@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  posix:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash -n install.sh
+      - run: python3 -m json.tool hooks/hooks.json >/dev/null
+      - run: python3 -m unittest discover -s tests -v
+      - run: bash tests/test_install.sh
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse scripts and JSON
+        shell: pwsh
+        run: |
+          $errors = $null
+          [void][System.Management.Automation.Language.Parser]::ParseFile("$PWD/install.ps1", [ref]$null, [ref]$errors)
+          if ($errors.Count) { throw ($errors | Out-String) }
+          Get-Content hooks/hooks.json -Raw | ConvertFrom-Json | Out-Null
+      - name: Test guard
+        run: py -3 -m unittest discover -s tests -v
+      - name: Test installer
+        shell: pwsh
+        run: |
+          $testHome = Join-Path $env:RUNNER_TEMP 'codex-home'
+          New-Item -ItemType Directory -Force -Path (Join-Path $testHome '.agents'), (Join-Path $testHome '.codex') | Out-Null
+          Set-Content (Join-Path $testHome '.codex/AGENTS.md') 'existing'
+          $env:CODEX_INSTALL_HOME = $testHome
+          try {
+            & ./install.ps1
+            $targets = @{
+              '.agents/skills' = (Join-Path $PWD 'skills')
+              '.codex/hooks' = (Join-Path $PWD 'hooks')
+              '.codex/hooks.json' = (Join-Path $PWD 'hooks/hooks.json')
+              '.codex/AGENTS.md' = (Join-Path $PWD 'AGENTS.md')
+            }
+            foreach ($entry in $targets.GetEnumerator()) {
+              $item = Get-Item -LiteralPath (Join-Path $testHome $entry.Key) -Force
+              if (@($item.Target)[0] -ne $entry.Value) { throw "Wrong target: $($entry.Key)" }
+            }
+            if (@(Get-ChildItem (Join-Path $testHome '.codex') -Filter 'AGENTS.md.backup-*').Count -ne 1) { throw 'Missing backup' }
+            & ./install.ps1
+            if (@(Get-ChildItem (Join-Path $testHome '.codex') -Filter 'AGENTS.md.backup-*').Count -ne 1) { throw 'Installer is not idempotent' }
+            Remove-Item (Join-Path $testHome '.codex/hooks.json')
+            New-Item -ItemType SymbolicLink -Path (Join-Path $testHome '.codex/hooks.json') -Target (Join-Path $testHome 'missing') | Out-Null
+            & ./install.ps1
+            $fixed = Get-Item -LiteralPath (Join-Path $testHome '.codex/hooks.json') -Force
+            if (@($fixed.Target)[0] -ne (Join-Path $PWD 'hooks/hooks.json')) { throw 'Dangling link was not repaired' }
+          } finally { Remove-Item Env:CODEX_INSTALL_HOME }
